@@ -27,9 +27,19 @@ do {
             sacar($clientes);
             break;
 
+        case '5':
+            consultarSaldo($clientes);
+            break;
+
+        case '6':
+            consultarExtrato($clientes);
+            break;
+
         case '0':
-            print 'Saindo...';
+            print "Saindo... \n";
             $continuar = false;
+            sleep(5);
+            system('clear');
             die();
 
         default:
@@ -65,7 +75,7 @@ function cadastrarCliente(&$clientes): bool
     $cpf = readline('Informe seu CPF: ');
 
     if (isset($clientes[$cpf])) {
-        print 'Esse cpf já foi cadastrado';
+        print "Esse cpf já foi cadastrado \n";
         return false;
     }
 
@@ -97,7 +107,7 @@ function cadastrarConta(array &$clientes): bool
     ];
 
     print "Conta criada com sucesso!\n";
-    print "O número da sua conta é: $numConta";
+    print "O número da sua conta é: $numConta \n";
     return true;
 }
 
@@ -125,22 +135,58 @@ function depositar(&$clientes): bool
     return true;
 }
 
-function sacar(&$clientes){
+function sacar(&$clientes)
+{
 
     $cpf = readline("informe seu CPF: ");
 
     //validar CPF
 
-    $conta = readline('Informe o número da conta: ');
+    $numConta = readline('Informe o número da conta: ');
     $valorSaque = readline('Informe o valor do saque: ');
 
-    if ($clientes[$cpf]['contas'][$conta]['saldo'] >= $valorSaque) {
-    
-    $clientes[$cpf]['contas'][$conta]['saldo'] -= $valorSaque;
-    $dataHora = date('d/m/Y H:i');
-    $clientes[$cpf]['contas'][$numConta]['extrato'][] = "Saque de R$ $valorSaque em $dataHora";
+    if ($clientes[$cpf]['contas'][$numConta]['saldo'] >= $valorSaque) {
 
-    print "Saque realizado com sucesso";
+        $clientes[$cpf]['contas'][$numConta]['saldo'] -= $valorSaque;
+        $dataHora = date('d/m/Y H:i');
+        $clientes[$cpf]['contas'][$numConta]['extrato'][] = "Saque de R$ $valorSaque em $dataHora";
 
+        print "Saque realizado com sucesso \n";
+
+
+        return true;
+    } else {
+
+        print "O saque deve ser um valor menor ou igual ao que você têm na sua conta! \n";
+
+        return false;
     }
+}
+
+function consultarSaldo(&$clientes)
+{
+
+    $cpf = readline("informe seu CPF: ");
+    $numConta = readline('Informe o número da conta: ');
+
+    $saldo = $clientes[$cpf]['contas'][$numConta]['saldo'];
+
+    print("\nO seu saldo é de R$" . $saldo . ",00 \n");
+
+    return true;
+}
+
+function consultarExtrato(&$clientes): bool
+{
+
+    $cpf = readline("informe seu CPF: ");
+    $numConta = readline('Informe o número da conta: ');
+
+    print "\n EXTRATO BANCÁRIO \n";
+
+    foreach ($clientes[$cpf]['contas'][$numConta]['extrato'] as $extrato) {
+        print "$extrato \n";
+    }
+
+    return true;
 }
